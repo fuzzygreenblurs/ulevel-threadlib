@@ -1,7 +1,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include "thread-worker.h"
+#include "../thread-worker.h"
 
 extern tcb* queue_head;
 extern tcb* queue_tail;

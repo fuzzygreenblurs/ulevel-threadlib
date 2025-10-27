@@ -1,6 +1,6 @@
 #include <assert.h>
+#include "../thread-worker.h"
 #include "../include/tracker.h"
-#include "../include/thread-worker.h"
 #include "../include/test_helpers.h"
 
 void test_track() {

@@ -1,5 +1,5 @@
 #include "../include/timer.h"
-#include "../include/thread-worker.h"
+#include "../thread-worker.h"
 #include  <assert.h>
 
 void test_isr_increments_quantum_counter() {

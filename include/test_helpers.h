@@ -1,7 +1,7 @@
 #ifndef TEST_HELPERS
 #define TEST_HELPERS
 
-#include "thread-worker.h"
+#include "../thread-worker.h"
 
 void reset_queue();
 tcb** create_queue(int n);

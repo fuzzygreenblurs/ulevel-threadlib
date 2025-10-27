@@ -1,7 +1,7 @@
 #ifndef TRACKER_H
 #define TRACKER_H
 
-#include "thread-worker.h"
+#include "../thread-worker.h"
 
 extern tcb* tracker_head;
 extern tcb* tracker_tail;

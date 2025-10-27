@@ -1,4 +1,4 @@
-#include "../include/thread-worker.h"
+#include "../thread-worker.h"
 #include "../include/queue.h"
 #include "../include/test_helpers.h"
 #include <assert.h>

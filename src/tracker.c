@@ -1,6 +1,6 @@
-#include <stdlib.h>
 #include "../include/tracker.h"
-#include "../include/thread-worker.h"
+#include "../thread-worker.h"
+#include <stdlib.h>
 
 tcb* tracker_head = NULL; 
 tcb* tracker_tail = NULL;

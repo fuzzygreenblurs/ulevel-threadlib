@@ -1,9 +1,9 @@
-#include "../include/thread-worker.h"
+#include "../thread-worker.h"
+#include "../include/timer.h"
 #include <signal.h>
 #include <sys/time.h>
 #include <string.h>
 #include <ucontext.h>
-#include "../include/timer.h"
 
 unsigned long elapsed_quantums = 0;
 
