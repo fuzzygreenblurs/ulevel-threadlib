@@ -71,7 +71,7 @@ void remove_from_queue(tcb* thread) {
 tcb* find_min_elapsed() {
   if (queue_head == NULL) return NULL; 
 
-  int min_elapsed = INT_MAX;
+  unsigned long min_elapsed = INT_MAX;
   tcb* min_thread = NULL;
 
   tcb* candidate = queue_head;

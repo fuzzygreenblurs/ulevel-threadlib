@@ -4,7 +4,7 @@
 #include <assert.h>
 
 void test_enqueue_single() {
-  printf("\nQUEUE: TEST_ENQUEUE_SINGLE...");
+  printf("QUEUE: TEST_ENQUEUE_SINGLE...");
   queue_head = NULL;
   queue_tail = NULL;
 
@@ -15,13 +15,13 @@ void test_enqueue_single() {
   assert(queue_tail == t0);
   assert(queue_tail->queue_next == NULL);
 
-  printf("PASS");
+  printf("PASS\n");
 
   free(t0);
 }
 
 void test_enqueue_multiple() {
-  printf("\nQUEUE: TEST_ENQUEUE_MULTIPLE...");
+  printf("QUEUE: TEST_ENQUEUE_MULTIPLE...");
  
   int num_threads = 3;
   tcb** threads = create_queue(num_threads);
@@ -33,11 +33,11 @@ void test_enqueue_multiple() {
   assert(queue_tail->queue_next == NULL);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_dequeue_single() {
-  printf("\nQUEUE: TEST_DEQUEUE_SINGLE...");
+  printf("QUEUE: TEST_DEQUEUE_SINGLE...");
  
   int num_threads = 3;
   tcb** threads = create_queue(num_threads);
@@ -52,11 +52,11 @@ void test_dequeue_single() {
   assert(queue_head->queue_next == threads[2]);
   
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_dequeue_past_empty() {
-  printf("\nQUEUE: TEST_DEQUEUE_PAST_EMPTY...");
+  printf("QUEUE: TEST_DEQUEUE_PAST_EMPTY...");
  
   int num_threads = 3;
   tcb** threads = create_queue(num_threads);
@@ -75,11 +75,11 @@ void test_dequeue_past_empty() {
   assert(dequeued == NULL);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_remove_middle() {
-  printf("\nQUEUE: TEST_REMOVE_FROM_ARBITRARY_POSITION...");
+  printf("QUEUE: TEST_REMOVE_FROM_ARBITRARY_POSITION...");
   int num_threads = 4;
   tcb** threads = create_queue(num_threads);
 
@@ -89,11 +89,11 @@ void test_remove_middle() {
   assert(queue_head->queue_next->queue_next == threads[3]);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_remove_head() {
-  printf("\nQUEUE: TEST_REMOVE_HEAD...");
+  printf("QUEUE: TEST_REMOVE_HEAD...");
   int num_threads = 3;
   tcb** threads = create_queue(num_threads);
 
@@ -102,11 +102,11 @@ void test_remove_head() {
   assert(queue_head == threads[1]);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_remove_tail() {
-  printf("\nQUEUE: TEST_REMOVE_TAIL...");
+  printf("QUEUE: TEST_REMOVE_TAIL...");
   int num_threads = 3;
   tcb** threads = create_queue(num_threads);
 
@@ -116,11 +116,11 @@ void test_remove_tail() {
   assert(queue_tail->queue_next == NULL);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_find_min_elapsed() {
-  printf("\nQUEUE: TEST_FIND_MIN_ELAPSED...");
+  printf("QUEUE: TEST_FIND_MIN_ELAPSED...");
   int num_threads = 5;
   tcb** threads = create_queue(num_threads);
   
@@ -134,11 +134,11 @@ void test_find_min_elapsed() {
   assert(min_elapsed == threads[3]);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 } 
 
 void test_return_first_thread_if_tied() {
-  printf("\nQUEUE: TEST_RETURN_FIRST_THREAD_IF_TIED...");
+  printf("QUEUE: TEST_RETURN_FIRST_THREAD_IF_TIED...");
   int num_threads = 5;
   tcb** threads = create_queue(num_threads);
   
@@ -150,7 +150,7 @@ void test_return_first_thread_if_tied() {
   assert(min_elapsed == threads[0]);
 
   free_threads(threads, num_threads);
-  printf("PASS");
+  printf("PASS\n");
 } 
 
 int main() {

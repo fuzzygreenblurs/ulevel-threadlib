@@ -4,7 +4,7 @@
 #include "../include/test_helpers.h"
 
 void test_track() {
-  printf("\nTRACKER: TEST_THREAD_LIFECYCLE_TRACKER...");
+  printf("TRACKER: TEST_THREAD_LIFECYCLE_TRACKER...");
   tracker_head = NULL;
   tracker_tail = NULL;
 
@@ -23,11 +23,11 @@ void test_track() {
   assert(tracker_tail->tracker_next == NULL);
 
   free(thread);
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_track_multiple_threads() {
-  printf("\nTRACKER: TEST_TRACK_MULTIPLE_THREADS...");
+  printf("TRACKER: TEST_TRACK_MULTIPLE_THREADS...");
 
   tracker_head = NULL;
   tracker_tail = NULL;
@@ -56,11 +56,11 @@ void test_track_multiple_threads() {
   free(t1);
   free(t2);
 
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_find_thread_tracker() {
-  printf("\nTRACKER: TEST_FIND_THREAD_TRACKER...");
+  printf("TRACKER: TEST_FIND_THREAD_TRACKER...");
   
   tracker_head = NULL;
   tracker_tail = NULL;
@@ -90,11 +90,11 @@ void test_find_thread_tracker() {
     free(threads[i]);
   }
 
-  printf("PASS");
+  printf("PASS\n");
 }
 
 void test_untrack() {
-  printf("\nTRACKER: TEST_UNTRACK_THREAD_LIFECYCLE...");
+  printf("TRACKER: TEST_UNTRACK_THREAD_LIFECYCLE...");
   
   tracker_head = NULL;
   tracker_tail = NULL;
@@ -127,7 +127,7 @@ void test_untrack() {
   free(threads[0]);
   free(threads[2]);
 
-  printf("PASS");
+  printf("PASS\n");
 }
 
 int main() {

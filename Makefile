@@ -1,5 +1,5 @@
 CC 		  := gcc
-CFLAGS  := -Wall -Wextra -g -I include
+CFLAGS  := -Wall -Wextra -Wno-deprecated-declarations -g -I include
 
 # static libraries package .o files 
 # @ compile time, linker lazy fetches symbols when linking tests
@@ -10,13 +10,14 @@ RANLIB := ranlib # indexes archive for quicker symbol lookups
 
 SRCDIR  := src
 TESTDIR := test
+INCDIR := include
 
 ## OBJECT FILES ##
 SRC_OBJS := $(SRCDIR)/queue.o \
 						$(SRCDIR)/scheduler.o \
 						$(SRCDIR)/timer.o \
 						$(SRCDIR)/tracker.o \
-						$(SRCDIR)/thread-worker.o \
+						$(SRCDIR)/thread-worker.o 
 
 TEST_HELPERS_OBJS := $(TESTDIR)/test_helpers.o
 ## OBJECT FILES ##
@@ -27,6 +28,10 @@ TESTS :=	$(TESTDIR)/test_queue \
 					$(TESTDIR)/test_tracker \
 					$(TESTDIR)/test_worker
 ## EXE FILES ## 
+
+
+# mark `all` and `test` as always-run targets
+.PHONY: all test
 
 ## RULES ##
 
@@ -40,6 +45,7 @@ TESTS :=	$(TESTDIR)/test_queue \
 	# $^: all deps 
 	# $<: 1st dep 
 
+
 all: clean thread-worker.a $(TESTS) 
 
 
@@ -49,7 +55,7 @@ thread-worker.a: $(SRC_OBJS)
 
 #TODO: default to PSJF for now 
 SCHED ?= PSJF
-${SRCDIR}/scheduler.o: ${SRCDIR}/scheduler.c ${SRCDIR}/scheduler.h 
+${SRCDIR}/scheduler.o: ${SRCDIR}/scheduler.c ${INCDIR}/scheduler.h 
 ifeq ($(SCHED), PSJF)
 	$(CC) -pthread $(CFLAGS) -c -DPSJF $< -o $@
 else ifeq ($(SCHED), MLFQ)
@@ -65,11 +71,11 @@ $(SRCDIR)/%.o: $(SRCDIR)/%.c
 	# %: filters deps to those with matching pattern in target
 	# -c $<: passes the 1st matching dep to be compiled (not linked)
 	# -o $@: passes the name of the target object file 
-	$(CC) $(CFLAGS) -pthread -c $< -o $@ 
+	$(CC) $(CFLAGS) -pthread -c $< -o $@ -I$(INCDIR)
 																	  		
 # compile test helper to OBJ
 $(TESTDIR)/test_helpers.o: $(TESTDIR)/test_helpers.c
-	$(CC) $(CFLAGS) -pthread -c $^ -o $@ 
+	$(CC) $(CFLAGS) -pthread -c $^ -o $@
 
 #links (i.e. builds EXE) with library and helper objects
 # implicit steps:
@@ -90,11 +96,13 @@ $(TESTDIR)/%: $(TESTDIR)/%.c thread-worker.a $(TEST_HELPERS_OBJS)
 # to test: sequentially loop over each EXE and invoke it (./{EXE})
 	# $$t: designates a shell variable ($t is a make variable)
 	# make escapes the first $ yielding shell cmd $t (./{EXE} in shell)
+
 test: all
 	@for t in $(TESTS); do \
-		echo "running $$t"; \
-		"$$t"; 			
+		echo "\nrunning $$t"; \
+		$$t || exit 1; \
 	done
+
 
 clean: 
 	rm -f thread-worker.a $(SRC_OBJS) $(TEST_HELPERS_OBJS) $(TESTS)

@@ -3,7 +3,7 @@
 #include  <assert.h>
 
 void test_isr_increments_quantum_counter() {
-  printf("\nTIMER: TEST_ISR_INCREMENTS_ELAPSED_QUANTUMS_COUNTER...");
+  printf("TIMER: TEST_ISR_INCREMENTS_ELAPSED_QUANTUMS_COUNTER...");
   elapsed_quantums = 0; 
   current = NULL;
 
