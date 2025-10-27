@@ -1,5 +1,5 @@
 CC 		  := gcc
-CFLAGS  := -Wall -Wextra -Wno-deprecated-declarations -g -I include
+CFLAGS  := -Wall -Wno-deprecated-declarations -g -I include
 
 # static libraries package .o files 
 # @ compile time, linker lazy fetches symbols when linking tests
@@ -8,10 +8,10 @@ CFLAGS  := -Wall -Wextra -Wno-deprecated-declarations -g -I include
 AR := ar -rc 		 # archive tool: bundles OBJs into .a file 
 RANLIB := ranlib # indexes archive for quicker symbol lookups
 
-SRCDIR  := src
-TESTDIR := test
-INCDIR := include
-
+SRCDIR   := src
+TESTDIR  := test
+INCDIR 	 := include
+BENCHDIR := benchmarks
 ## OBJECT FILES ##
 SRC_OBJS := $(SRCDIR)/queue.o \
 						$(SRCDIR)/scheduler.o \
@@ -23,15 +23,17 @@ TEST_HELPERS_OBJS := $(TESTDIR)/test_helpers.o
 ## OBJECT FILES ##
 
 ## EXE FILES ##
-TESTS :=	$(TESTDIR)/test_queue \
-					$(TESTDIR)/test_timer \
-					$(TESTDIR)/test_tracker \
-					$(TESTDIR)/test_worker
+TEST_EXES := $(TESTDIR)/test_queue \
+						 $(TESTDIR)/test_timer \
+						 $(TESTDIR)/test_tracker \
+						 $(TESTDIR)/test_worker
+
+BENCH_EXES := $(BENCHDIR)/parallel_cal
 ## EXE FILES ## 
 
 
 # mark `all` and `test` as always-run targets
-.PHONY: all test
+.PHONY: all test bench
 
 ## RULES ##
 
@@ -45,8 +47,7 @@ TESTS :=	$(TESTDIR)/test_queue \
 	# $^: all deps 
 	# $<: 1st dep 
 
-
-all: clean thread-worker.a $(TESTS) 
+all: clean thread-worker.a $(TEST_EXES)
 
 
 thread-worker.a: $(SRC_OBJS)
@@ -98,14 +99,18 @@ $(TESTDIR)/%: $(TESTDIR)/%.c thread-worker.a $(TEST_HELPERS_OBJS)
 	# make escapes the first $ yielding shell cmd $t (./{EXE} in shell)
 
 test: all
-	@for t in $(TESTS); do \
+	@for t in $(TEST_EXES); do \
 		echo "\nrunning $$t"; \
 		$$t || exit 1; \
 	done
 
+bench: all $(BENCH_EXES)
+
+$(BENCHDIR)/%: $(BENCHDIR)/%.c thread-worker.a
+	$(CC)	$(CFLAGS) -pthread $^ -o $@
 
 clean: 
-	rm -f thread-worker.a $(SRC_OBJS) $(TEST_HELPERS_OBJS) $(TESTS)
+	rm -f thread-worker.a $(SRC_OBJS) $(TEST_HELPERS_OBJS) $(TEST_EXES) $(BENCH_EXES)
 
 ## RULES ## 
 
