@@ -22,6 +22,7 @@ void track(tcb* thread) {
 
 void untrack(tcb* thread, tcb* prev) {
   if(tracker_head == NULL) return; 
+  if(thread == NULL) return; 
 
   if(thread == tracker_head) {
     tracker_head = thread->tracker_next;
@@ -37,9 +38,12 @@ void untrack(tcb* thread, tcb* prev) {
     return;
   } 
 
-  prev->tracker_next = thread->tracker_next;
-  free(thread);
-}
+  if(prev != NULL && prev->tracker_next == thread) {
+    prev->tracker_next = thread->tracker_next;
+    free(thread);
+  }
+}  
+
 
 tcb* find_thread_tracker(worker_t thread, tcb** prev_tracker) { 
   if(tracker_head == NULL) return NULL;

@@ -51,7 +51,11 @@ void test_track_multiple_threads() {
   assert(tracker_head->tracker_next == t1);
   assert(t1->tracker_next == t2);
   assert(tracker_tail->tracker_next == NULL);
-  
+
+  free(t0);
+  free(t1);
+  free(t2);
+
   printf("PASS");
 }
 
@@ -61,8 +65,9 @@ void test_find_thread_tracker() {
   tracker_head = NULL;
   tracker_tail = NULL;
 
-  tcb* threads[4];
-  for(int i = 0; i < 4; i++) {
+  int num_threads = 4;
+  tcb* threads[num_threads];
+  for(int i = 0; i < num_threads; i++) {
     tcb* t = (tcb*)malloc(sizeof(tcb));
     threads[i] = t;
     threads[i]->thread_id = i; 
@@ -80,7 +85,11 @@ void test_find_thread_tracker() {
 
   target = find_thread_tracker(3, NULL);
   assert(target == NULL);
-  
+
+  for(int i = 0; i < num_threads; i++) {
+    free(threads[i]);
+  }
+
   printf("PASS");
 }
 
@@ -114,6 +123,9 @@ void test_untrack() {
   assert(tracker_head->tracker_next == threads[1]);
   untrack(threads[1], threads[0]);
   assert(tracker_head->tracker_next == threads[2]);
+
+  free(threads[0]);
+  free(threads[2]);
 
   printf("PASS");
 }
