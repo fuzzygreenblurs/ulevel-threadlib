@@ -19,3 +19,27 @@ void track(tcb* thread) {
 
   thread->tracker_next = NULL;  
 }
+
+tcb* find_thread_tracker(worker_t thread, tcb** prev_tracker) { 
+  if(tracker_head == NULL) return NULL;
+
+  tcb* candidate = tracker_head;
+  tcb* prev = NULL;
+
+  do {
+    if(candidate->thread_id == thread) {
+      // optional param prev_tracker can be provided
+      if(prev_tracker != NULL) {
+        *prev_tracker = prev;
+      }
+
+      return candidate;
+    } 
+
+    prev = candidate;
+    candidate = candidate->tracker_next;
+  } while(candidate != NULL);
+
+  return NULL;
+}
+
