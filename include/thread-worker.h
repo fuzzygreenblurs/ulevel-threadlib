@@ -42,8 +42,12 @@ typedef struct TCB {
   struct TCB* tracker_next;
   int         elapsed_time;
   int         joinable;
+  ucontext_t  context;
 } tcb;
 
+
+extern tcb* current;
+extern ucontext_t scheduler_context;
 
 //typedef struct TCB {
 //  worker_t    thread_id;
