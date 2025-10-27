@@ -83,10 +83,45 @@ void test_find_thread_tracker() {
   
   printf("PASS");
 }
+
+void test_untrack() {
+  printf("\nTRACKER: TEST_UNTRACK_THREAD_LIFECYCLE...");
+  
+  tracker_head = NULL;
+  tracker_tail = NULL;
+
+  int num_threads = 3; 
+  tcb* threads[num_threads];
+  for(int i = 0; i < num_threads; i++) {
+    tcb* t = (tcb*)malloc(sizeof(tcb));
+    threads[i] = t;
+    threads[i]->thread_id = i; 
+  }
+
+  tcb* target = find_thread_tracker(1, NULL);
+  assert(target == NULL);
+
+  assert(tracker_head == NULL);
+  assert(tracker_tail == NULL);
+  untrack(threads[1], threads[0]);
+  assert(tracker_head == NULL);
+  assert(tracker_tail == NULL);
+
+  track(threads[0]);
+  track(threads[1]);
+  track(threads[2]);
+
+  assert(tracker_head->tracker_next == threads[1]);
+  untrack(threads[1], threads[0]);
+  assert(tracker_head->tracker_next == threads[2]);
+
+  printf("PASS");
+}
+
 int main() {
   test_track();
   test_track_multiple_threads();
   test_find_thread_tracker();
-  
+  test_untrack();
   return 0;
 }
