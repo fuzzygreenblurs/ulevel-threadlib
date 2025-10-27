@@ -11,10 +11,31 @@
   ucontext_t main_context;
   long tot_cntx_switches = 0;
 
+  double avg_turn_time = 0; 
+  double avg_resp_time = 0;
+  static long accum_turn_time = 0;
+  static long accum_resp_time = 0;
+
   static int scheduler_initialized = 0;
   static worker_t latest_assigned_id = 0;
+  static long completed_threads = 0;
 
-  void worker_exit(void* value_ptr);
+
+  void worker_exit(void* value_ptr) {
+    current->retval = value_ptr;
+    free(current->stack);            
+    current->status = TERMINATED;
+    current->completion_time = elapsed_quantums;
+
+    accum_turn_time += current->completion_time - current->creation_time; 
+    accum_resp_time += current->first_run_time  - current->creation_time;
+    completed_threads++;
+
+    avg_turn_time = (double)(accum_turn_time/completed_threads) * QUANTUM;
+    avg_resp_time = (double)(accum_resp_time/completed_threads) * QUANTUM;
+
+    setcontext(&scheduler_context);
+  }
 
   static void store_cb_retval() {
     void* ret = current->cb(current->cb_arg);

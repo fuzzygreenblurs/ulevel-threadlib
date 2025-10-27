@@ -82,4 +82,6 @@ int worker_create(worker_t* thread, pthread_attr_t* attr, void*(*function)(void*
 //  int         completion_time;
 //} tcb; 
 
+void worker_exit(void* value_ptr);
+
 #endif
