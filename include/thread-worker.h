@@ -39,8 +39,9 @@ typedef int worker_t;
 typedef struct TCB {
   worker_t    thread_id;
   struct TCB* queue_next;
-  struct TCB* tracked_next;
+  struct TCB* tracker_next;
   int         elapsed_time;
+  int         joinable;
 } tcb;
 
 
