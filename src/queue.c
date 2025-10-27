@@ -1,6 +1,6 @@
 #include <limits.h>
-#include "queue.h"
-#include "thread-worker.h"
+#include "../include/queue.h"
+#include "../include/thread-worker.h"
 
 tcb* queue_head = NULL;
 tcb* queue_tail = NULL;

@@ -1,5 +1,5 @@
-#include "thread-worker.h"
-#include "queue.h"
+#include "../include/thread-worker.h"
+#include "../include/queue.h"
 #include <assert.h>
 
 void reset_queue() {
