@@ -43,11 +43,25 @@ typedef struct TCB {
   int         elapsed_time;
   int         joinable;
   ucontext_t  context;
+  int         status;
+  int         first_run_time;
+  int         creation_time;
+  int         completion_time;
+  void*       retval;
+  void*       stack;
+  void*       (*cb)(void*);
+  void*       cb_arg;
 } tcb;
 
 
 extern tcb* current;
 extern ucontext_t scheduler_context;
+extern ucontext_t main_context; 
+extern long tot_cntx_switches;  
+
+int worker_yield();
+
+int worker_create(worker_t* thread, pthread_attr_t* attr, void*(*function)(void*), void* arg);
 
 //typedef struct TCB {
 //  worker_t    thread_id;
