@@ -65,24 +65,37 @@ extern ucontext_t scheduler_context;
 extern ucontext_t main_context; 
 extern long tot_cntx_switches;  
 
+void worker_exit(void* value_ptr); 
+int worker_join(worker_t thread, void* *value_ptr); 
 int worker_yield();
-int worker_create(worker_t* thread, pthread_attr_t* attr, void*(*function)(void*), void* arg);
-int worker_join(worker_t thread, void* *value_ptr);
-void worker_exit(void* value_ptr);
+int worker_create(
+  worker_t* thread, 
+  pthread_attr_t* attr, 
+  void*(*function)(void*), 
+  void* arg
+); 
+
+int worker_mutex_lock(worker_mutex_t *mutex);
+int worker_mutex_unlock(worker_mutex_t *mutex);
+int worker_mutex_destroy(worker_mutex_t *mutex);
+int worker_mutex_init(
+  worker_mutex_t *mutex, 
+  const pthread_mutexattr_t *mutexattr
+);
+
+#ifdef USE_WORKERS
+#define pthread_t worker_t              //done
+#define pthread_mutex_t worker_mutex_t  //done
+#define pthread_create(t, a, f, arg) worker_create(t, a, (void*(*)(void*))f, arg) //done
+#define pthread_join worker_join        //done
+#define pthread_exit worker_exit        //done
+
+#define pthread_mutex_init worker_mutex_init //done
+#define pthread_mutex_lock worker_mutex_lock //done 
+#define pthread_mutex_unlock worker_mutex_unlock //done
+#define pthread_mutex_destroy worker_mutex_destroy //TODO
+#endif
 
 /* Function to print global statistics. Do not modify this function.*/
 void print_app_stats(void);
-
-#ifdef USE_WORKERS
-#define pthread_t worker_t
-#define pthread_mutex_t worker_mutex_t
-#define pthread_create(t, a, f, arg) worker_create(t, a, (void*(*)(void*))f, arg)
-#define pthread_exit worker_exit
-#define pthread_join worker_join
-#define pthread_mutex_init worker_mutex_init
-#define pthread_mutex_lock worker_mutex_lock
-#define pthread_mutex_unlock worker_mutex_unlock
-#define pthread_mutex_destroy worker_mutex_destroy
-#endif
-
 #endif

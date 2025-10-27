@@ -9,7 +9,8 @@ unsigned long elapsed_quantums = 0;
 
 void timer_isr() {
   elapsed_quantums++;
-  if(current != NULL) {
+  fprintf(stderr, "timer tick: %lu\n",elapsed_quantums);
+  if(current && current->status == SCHEDULED) {
     swapcontext(&(current->context), &(scheduler_context));
   }
 }

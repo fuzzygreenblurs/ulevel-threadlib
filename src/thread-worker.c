@@ -4,8 +4,7 @@
 #include "../include/tracker.h"
 #include "../include/scheduler.h"
 
-
-// Global variables
+// global variables
 tcb* current = NULL;
 ucontext_t scheduler_context;
 ucontext_t main_context;
@@ -105,7 +104,6 @@ int worker_create(
   }
 
   // - create Thread Control Block (TCB)
-  
   // TODO: does creating the new thread need to be atomic? 
   tcb* worker_tcb = (tcb*)malloc(sizeof(tcb)); 
   if(!worker_tcb) return -1;                     // TODO: assert/raise readable error?
@@ -118,8 +116,6 @@ int worker_create(
   worker_tcb->cb = function;
   worker_tcb->cb_arg = arg;
 
-
-  
   // create and initialize the context of this worker thread      
   // getcontext initializes internal fields of the gien ucontex_t struct
   // it captures the current CPU state as a starting template
@@ -153,3 +149,86 @@ int worker_create(
   return 0;
 }
 
+int worker_mutex_init(worker_mutex_t *mutex, 
+        const pthread_mutexattr_t *mutexattr) {
+	//- initialize data structures for this mutex
+  mutex->locked = 0;
+  mutex->blocked_head = NULL;
+  mutex->blocked_tail = NULL;
+	return 0;
+};
+
+int worker_mutex_lock(worker_mutex_t *mutex) {
+  // -:149
+  // :use the built-in test-and-set atomic function to test the mutex
+  // - if the mutex is ahow me aquired successfully, enter the critical section
+  // - if acquiring mutex fails, push current thread into block list and
+  // context switch to the scheduler thread
+
+  if(__sync_lock_test_and_set(&mutex->locked, 1)) {
+    current->status = BLOCKED;
+
+    if(mutex->blocked_tail == NULL) {
+      mutex->blocked_head = current;
+    } else {
+      mutex->blocked_tail->queue_next = current;
+    }
+    mutex->blocked_tail = current;
+    current->queue_next = NULL;
+    
+    swapcontext(&(current->context), &scheduler_context);
+  } 
+  
+  return 0;
+};
+
+int worker_mutex_unlock(worker_mutex_t *mutex) {
+	// - release mutex and make it available again. 
+	// - put threads in block list to run queue 
+	// so that they could coimpete for mutex later.
+
+  if(mutex->blocked_head != NULL) {
+    tcb* unblocked = mutex->blocked_head;
+    mutex->blocked_head = unblocked->queue_next;
+    unblocked->status = READY;
+    enqueue(unblocked);
+
+    if(mutex->blocked_head == NULL) {
+      mutex->blocked_tail = NULL;
+    }
+  }
+
+  mutex->locked = 0;
+
+  return 0;
+};
+
+int worker_mutex_destroy(worker_mutex_t *mutex) {
+  // mutexes are assumed to be stack allocated and will be
+  // de-allocated at the end of the caller function
+  if (mutex->blocked_head == NULL) {
+    mutex->blocked_tail = NULL;
+    return 0;
+  }
+
+  tcb* blocked = mutex->blocked_head;
+
+  do {
+    blocked->status = READY;
+    enqueue(blocked);
+    blocked = blocked->queue_next;
+  } while(blocked != NULL);
+
+  mutex->locked = 0;
+  mutex->blocked_head = NULL;
+  mutex->blocked_tail = NULL;
+  return 0;
+}
+  
+//DO NOT MODIFY THIS FUNCTION
+/* Function to print global statistics. Do not modify this function.*/
+void print_app_stats(void) {
+  fprintf(stderr, "Total context switches %ld \n", tot_cntx_switches);
+  fprintf(stderr, "Average turnaround time %lf \n", avg_turn_time);
+  fprintf(stderr, "Average response time  %lf \n", avg_resp_time);
+}
