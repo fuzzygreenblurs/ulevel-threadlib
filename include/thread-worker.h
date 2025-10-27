@@ -37,20 +37,20 @@
 typedef int worker_t;
 
 typedef struct TCB {
-  worker_t    thread_id;
-  struct TCB* queue_next;
-  struct TCB* tracker_next;
-  int         elapsed_time;
-  int         joinable;
-  ucontext_t  context;
-  int         status;
-  int         first_run_time;
-  int         creation_time;
-  int         completion_time;
-  void*       retval;
-  void*       stack;
-  void*       (*cb)(void*);
-  void*       cb_arg;
+  worker_t      thread_id;
+  struct TCB*   queue_next;
+  struct TCB*   tracker_next;
+  unsigned long elapsed_time;
+  int           joinable;
+  ucontext_t    context;
+  int           status;
+  int           first_run_time;
+  int           creation_time;
+  int           completion_time;
+  void*         retval;
+  void*         stack;
+  void*         (*cb)(void*);
+  void*         cb_arg;
 } tcb;
 
 
@@ -60,28 +60,8 @@ extern ucontext_t main_context;
 extern long tot_cntx_switches;  
 
 int worker_yield();
-
 int worker_create(worker_t* thread, pthread_attr_t* attr, void*(*function)(void*), void* arg);
-
-//typedef struct TCB {
-//  worker_t    thread_id;
-//  int         status;
-//  ucontext_t  context;
-//  void*       stack;
-//  struct TCB* runqueue_next; 
-//  struct TCB* tracked_next;
-//  int         joinable;
-//  int         elapsed_time;
-//  void*       retval;
-//
-//  void*       (*cb)(void*);
-//  void*       cb_arg;
-//
-//  int         creation_time;
-//  int         first_run_time;
-//  int         completion_time;
-//} tcb; 
-
 void worker_exit(void* value_ptr);
+int worker_join(worker_t thread, void* *value_ptr);
 
 #endif
